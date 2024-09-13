@@ -64,21 +64,25 @@ model PaymentMethod {
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   Transaction Transaction[]
 
+  @@unique([userId, name])
   @@map("payMethod")
 }
 
 model PaymentCategory {
   id         String   @id @default(uuid())
   name       String
-  img        String? // URL da imagem
-  color      String? // cor hexadecimal
+  colorId    String
   userId     String
+  iconId     String
   created_at DateTime @default(now())
   update_at  DateTime @updatedAt
 
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   Transaction Transaction[]
+  color       Color         @relation(fields: [colorId], references: [id])
+  icon        Icon          @relation(fields: [iconId], references: [id])
 
+  @@unique([userId, name, colorId, iconId])
   @@map("payCategories")
 }
 
@@ -101,6 +105,28 @@ enum ReminderStatus {
   PENDING
   COMPLETED
   CANCELLED
+}
+
+model Color {
+  id         String   @id @default(uuid())
+  hex        String   @unique
+  created_at DateTime @default(now())
+  update_at  DateTime @updatedAt
+
+  PaymentCategory PaymentCategory[]
+
+  @@map("colors")
+}
+
+model Icon {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  created_at DateTime @default(now())
+  update_at  DateTime @updatedAt
+
+  PaymentCategory PaymentCategory[]
+
+  @@map("icons")
 }
 
 model Settings {

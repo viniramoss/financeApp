@@ -8,8 +8,8 @@ const transactionsSchema = z.array(
       name: z.string(),
       amount: z.number(),
       type: z.enum(["INCOME", "EXPENSE"]),
-      created_at: z.date(),
-      update_at: z.date()
+      created_at: z.coerce.date().optional(),
+      update_at: z.coerce.date().optional()
     })
   );
 

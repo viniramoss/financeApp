@@ -5,6 +5,8 @@ import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod
 import { env } from "../src/env";
 import { transactions } from './routes/get-transactions';
 import { createTransactions } from './routes/create-transaction';
+import { createUser } from './routes/create-user';
+import { createCategory } from './routes/create-category';
 
 const app = fastify();
 
@@ -16,6 +18,8 @@ app.register(cors, {
 })
 app.register(transactions)
 app.register(createTransactions)
+app.register(createUser)
+app.register(createCategory)
 
 app.get('/teste', () => {
     return "hello"
