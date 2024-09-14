@@ -10,14 +10,16 @@ const transactionsSchema = z.object({
     type: z.enum(["INCOME", "EXPENSE"]),
     created_at: z.coerce.date().optional(),
     update_at: z.coerce.date().optional(), 
-    userId: z.string().uuid(), 
-    paymentCategoryId: z.string().uuid(),
-    paymentMethodId: z.string().uuid()
+    paymentCategoryName: z.string(),
+    paymentMethodName: z.string()
 });
 
 export async function createTransactions(app: FastifyInstance) {
-    app.withTypeProvider<ZodTypeProvider>().post('/transactions',{
+    app.withTypeProvider<ZodTypeProvider>().post('/transactions/:userId',{
         schema: {
+            params: z.object({
+                userId: z.string().uuid() 
+            }),
             body: transactionsSchema
         }
     }, async (request) => {
@@ -29,10 +31,23 @@ export async function createTransactions(app: FastifyInstance) {
             created_at,
             description,
             update_at,
-            paymentCategoryId,
-            paymentMethodId,
-            userId
+            paymentCategoryName,
+            paymentMethodName,
         } = request.body
+        const { userId } = request.params
+
+        const category = await prisma.paymentCategory.findFirst({
+            where: { name: paymentCategoryName, userId: userId }
+        })
+        if(!category){
+            throw new Error("Erro ao criar a transação por conta da categoria")
+        }
+        const method = await prisma.paymentMethod.findFirst({
+            where: { name: paymentMethodName, userId: userId }
+        })
+        if(!method){
+            throw new Error("Erro ao criar a transação por conta do metodo")
+        }
 
         const transaction = await prisma.transaction.create({
             data: {
@@ -43,9 +58,9 @@ export async function createTransactions(app: FastifyInstance) {
                 created_at,
                 description,
                 update_at,
-                user: { connect: { id: userId } },
-                paymentCategory: { connect: { id: paymentCategoryId } },
-                paymentMethod: { connect: { id: paymentMethodId } },
+                userId,
+                paymentCategoryId: category.id,
+                paymentMethodId: method.id
             }
         })
         if(!transaction) {

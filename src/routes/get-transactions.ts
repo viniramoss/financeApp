@@ -14,10 +14,19 @@ const transactionsSchema = z.array(
   );
 
 export async function transactions(app: FastifyInstance) {
-    app.withTypeProvider<ZodTypeProvider>().get('/transactionsView', async (r, reply) => {
-      
+    app.withTypeProvider<ZodTypeProvider>().get('/transactionsView/:userId',{
+        schema: {
+            params: z.object({
+                userId: z.string().uuid()
+            })
+        }
+    }, async (request, reply) => {
+        const { userId } = request.params
         try {
             const transactionsFromDb = await prisma.transaction.findMany({
+                where: {
+                    userId: userId
+                },
                 select: {
                     id: true,
                     name: true,

@@ -17,6 +17,13 @@ const defaultCategories = [
     { name: 'Roupas', iconName: 'shirt', colorHex: '#99FFCC' },
     { name: 'Manutenção', iconName: 'hammer', colorHex: '#FFA852' },
 ];
+const defaultMethod = [
+    {name: 'Dinheiro'},
+    {name: 'Debito'},
+    {name: 'Credito'},
+    {name: 'PIX'},
+    {name: 'Voucher'}
+]
 
 export async function createUser(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().post('/user', {
@@ -27,7 +34,6 @@ export async function createUser(app: FastifyInstance) {
         try {
             const { name, email, password, budget } = request.body;
 
-            // Cria o usuário
             const user = await prisma.user.create({
                 data: {
                     name,
@@ -37,11 +43,10 @@ export async function createUser(app: FastifyInstance) {
                 }
             });
 
-            // Busca os IDs de ícones e cores
+
             const icons = await prisma.icon.findMany();
             const colors = await prisma.color.findMany();
 
-            // Cria as categorias padrão
             await Promise.all(defaultCategories.map(async (category) => {
                 const icon = icons.find(icon => icon.name === category.iconName);
                 const color = colors.find(color => color.hex === category.colorHex);
@@ -59,6 +64,15 @@ export async function createUser(app: FastifyInstance) {
                     }
                 });
             }));
+
+            await Promise.all(defaultMethod.map(async (method) => {
+                await prisma.paymentMethod.create({
+                    data: {
+                        name: method.name,
+                        userId: user.id
+                    }
+                })
+            }))
 
             return { userId: user.id };
         } catch (error) {
