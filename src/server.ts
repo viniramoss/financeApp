@@ -8,6 +8,7 @@ import { createTransactions } from './routes/create-transaction';
 import { createUser } from './routes/create-user';
 import { createCategory } from './routes/create-category';
 import { createMethod } from './routes/create-method';
+import { createReminder } from './routes/create-reminder';
 
 const app = fastify();
 
@@ -22,6 +23,7 @@ app.register(createTransactions)
 app.register(createUser)
 app.register(createCategory)
 app.register(createMethod)
+app.register(createReminder)
 
 app.get('/teste', () => {
     return "hello"
