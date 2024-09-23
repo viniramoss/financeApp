@@ -2,19 +2,30 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod"
 import {prisma} from '../lib/prisma'
 import z from "zod";
+const paymentMethodSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+});
+    
+const paymentCategorySchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+});
 const transactionsSchema = z.array(
     z.object({
       id: z.string().uuid(),
       name: z.string(),
       amount: z.number(),
       type: z.enum(["INCOME", "EXPENSE"]),
+      paymentMethod: paymentMethodSchema,
+      paymentCategory: paymentCategorySchema,
       created_at: z.coerce.date().optional(),
-      update_at: z.coerce.date().optional()
-    })
-  );
 
-export async function transactions(app: FastifyInstance) {
-    app.withTypeProvider<ZodTypeProvider>().get('/transactionsView/:userId',{
+    })
+);
+
+export async function getTransactions(app: FastifyInstance) {
+    app.withTypeProvider<ZodTypeProvider>().get('/transactions/:userId',{
         schema: {
             params: z.object({
                 userId: z.string().uuid()
@@ -27,13 +38,19 @@ export async function transactions(app: FastifyInstance) {
                 where: {
                     userId: userId
                 },
-                select: {
-                    id: true,
-                    name: true,
-                    amount: true,
-                    type: true,
-                    created_at: true,
-                    update_at: true
+                include: {
+                    paymentMethod: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    },
+                    paymentCategory: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    }
                 }
             })
             if(transactionsFromDb.length === 0) {

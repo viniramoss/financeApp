@@ -3,11 +3,13 @@ import fastify from 'fastify';
 import cors from "@fastify/cors";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { env } from "../src/env";
-import { transactions } from './routes/get-transactions';
+import { getTransactions } from './routes/get-transactions';
 import { createTransactions } from './routes/create-transaction';
 import { createUser } from './routes/create-user';
 import { createCategory } from './routes/create-category';
 import { createMethod } from './routes/create-method';
+import { createReminder } from './routes/create-reminder';
+import { getUser } from './routes/get-user';
 
 const app = fastify();
 
@@ -17,11 +19,13 @@ app.setSerializerCompiler(serializerCompiler);
 app.register(cors, {
     origin: `${env.WEB_BASE_URL}`
 })
-app.register(transactions)
+app.register(getTransactions)
 app.register(createTransactions)
 app.register(createUser)
 app.register(createCategory)
 app.register(createMethod)
+app.register(createReminder)
+app.register(getUser)
 
 app.get('/teste', () => {
     return "hello"

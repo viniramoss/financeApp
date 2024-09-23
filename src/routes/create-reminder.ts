@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod"
 import {prisma} from '../lib/prisma'
+import { dayjs } from "../lib/dayjs";
 import z from "zod";
 const reminderSchema = z.object({
     name: z.string(),
@@ -17,25 +18,30 @@ export async function createReminder(app: FastifyInstance) {
             body: reminderSchema
         }
     }, async (request) => {
-        const {
-            name,
-            description,
-            date
-        } = request.body
-        const { userId } = request.params
-
-
-        const reminder = await prisma.reminder.create({
-            data: {
+        try {
+            const {
                 name,
-                date,
                 description,
-                userId,
+                date
+            } = request.body
+            const { userId } = request.params
+
+            if(dayjs(date).isBefore(new Date())){
+                return "Cannot create reminder, invalid date!"
             }
-        })
-        if(!reminder) {
-            throw new Error("Transaction not found");
+    
+    
+            const reminder = await prisma.reminder.create({
+                data: {
+                    name,
+                    date,
+                    description,
+                    userId
+                }
+            })
+            return {reminderId: reminder.id}
+        } catch (error) {
+            throw new Error("Cannot create reminder!  " + error);
         }
-        return {reminderId: reminder.id}
     })
 }
