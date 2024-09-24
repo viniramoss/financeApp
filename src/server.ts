@@ -10,6 +10,11 @@ import { createCategory } from './routes/create-category';
 import { createMethod } from './routes/create-method';
 import { createReminder } from './routes/create-reminder';
 import { getUser } from './routes/get-user';
+import { getReminder } from './routes/get-reminder';
+import { getMethod } from './routes/get-method';
+import { getCategoty } from './routes/get-category';
+import { getColors } from './routes/get-colors';
+import { getIcons } from './routes/get-icons';
 
 const app = fastify();
 
@@ -19,13 +24,18 @@ app.setSerializerCompiler(serializerCompiler);
 app.register(cors, {
     origin: `${env.WEB_BASE_URL}`
 })
-app.register(getTransactions)
 app.register(createTransactions)
 app.register(createUser)
 app.register(createCategory)
 app.register(createMethod)
 app.register(createReminder)
+app.register(getTransactions)
 app.register(getUser)
+app.register(getReminder)
+app.register(getMethod)
+app.register(getCategoty)
+app.register(getColors)
+app.register(getIcons)
 
 app.get('/teste', () => {
     return "hello"
