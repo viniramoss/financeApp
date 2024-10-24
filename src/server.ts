@@ -74,9 +74,11 @@ app.get('/teste', () => {
 
 const start = async () => {
     try {
-        await runMigrations();
+        if (process.env.NODE_ENV === 'production') {
+            await runMigrations();
+        }
 
-        await app.listen({ port: env.PORT, host: '0.0.0.0' }).then(() => {
+        await app.listen({ port: Number(process.env.PORT) || 10000, host: '0.0.0.0' }).then(() => {
             console.log('SERVER RUNNING on port ' + env.PORT)
         })
     } catch (err) {
