@@ -27,7 +27,8 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
 app.register(cors, {
-    origin: `${env.WEB_BASE_URL}`
+    // origin: `${env.WEB_BASE_URL}`
+    origin: `*`
 })
 app.register(createTransactions)
 app.register(createUser)
