@@ -21,6 +21,26 @@ import { deleteCategory } from './routes/delete-category';
 import { deleteMethod } from './routes/delete-method';
 import { deleteUser } from './routes/delete-user';
 
+import { PrismaClient } from '@prisma/client';
+import { exec } from 'child_process';
+import util from 'util';   
+
+const prisma = new PrismaClient();
+const execPromise = util.promisify(exec);
+
+const runMigrations = async () => {
+    try {
+      const { stdout, stderr } = await execPromise('npx prisma migrate deploy');
+      console.log('Migration stdout:', stdout);
+      if (stderr) {
+        console.error('Migration stderr:', stderr);
+      }
+    } catch (err) {
+      console.error('Failed to run migrations:', err);
+      process.exit(1);
+    }
+  }
+
 const app = fastify();
 
 app.setValidatorCompiler(validatorCompiler);
@@ -54,6 +74,8 @@ app.get('/teste', () => {
 
 const start = async () => {
     try {
+        await runMigrations();
+
         await app.listen({ port: env.PORT, host: '0.0.0.0' }).then(() => {
             console.log('SERVER RUNNING on port ' + env.PORT)
         })
@@ -63,3 +85,8 @@ const start = async () => {
     }
 }
 start();
+
+process.on('SIGINT', async () => {
+    await prisma.$disconnect();
+    process.exit();
+});
