@@ -2,7 +2,7 @@ import 'dotenv/config';
 import fastify from 'fastify';
 import cors from "@fastify/cors";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
-import { env } from "../src/env";
+import { env } from './env';
 import { getTransactions } from './routes/get-transactions';
 import { createTransactions } from './routes/create-transaction';
 import { createUser } from './routes/create-user';
