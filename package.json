@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
     "build": "npx tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "migrate": "npx prisma migrate deploy",
+    "seed": "npx tsx src/seed.ts"
   },
   "keywords": [],
   "author": "",
