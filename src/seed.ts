@@ -4,6 +4,8 @@ const prisma = new PrismaClient();
 
 async function seedDatabase() {
   // Adicionando cores
+  await prisma.color.deleteMany();
+
   await prisma.color.createMany({
     data: [
       { hex: "#FFD699" }, // amareloPastel
@@ -17,7 +19,7 @@ async function seedDatabase() {
       { hex: "#99FFAA" }, // verdeAguaPastel
       { hex: "#AA99FF" }, //lilasPastel
       { hex: "#FF9999" }, // vermelhoPastel
-      { hex: "#CC99C" }, // rosinPastel
+      { hex: "#CC99CC" }, // rosinPastel
     ],
   });
 

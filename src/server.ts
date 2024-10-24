@@ -39,7 +39,20 @@ const runMigrations = async () => {
       console.error('Failed to run migrations:', err);
       process.exit(1);
     }
-  }
+}
+
+const runSeed = async () => {
+    try {
+        const { stdout, stderr } = await execPromise('npx tsx src/seed.ts');
+        console.log('Seed stdout:', stdout);
+        if (stderr) {
+            console.error('Seed stderr:', stderr);
+        }
+    } catch (err) {
+        console.error('Failed to run seed:', err);
+        process.exit(1);
+    }
+};
 
 const app = fastify();
 
@@ -76,6 +89,7 @@ const start = async () => {
     try {
         if (process.env.NODE_ENV === 'production') {
             await runMigrations();
+            await runSeed();
         }
 
         await app.listen({ port: Number(process.env.PORT) || 10000, host: '0.0.0.0' }).then(() => {
