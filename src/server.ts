@@ -15,6 +15,11 @@ import { getMethod } from './routes/get-method';
 import { getCategoty } from './routes/get-category';
 import { getColors } from './routes/get-colors';
 import { getIcons } from './routes/get-icons';
+import { deleteTransactions } from './routes/delete-transaction';
+import { deleteReminder } from './routes/delete-reminder';
+import { deleteCategory } from './routes/delete-category';
+import { deleteMethod } from './routes/delete-method';
+import { deleteUser } from './routes/delete-user';
 
 const app = fastify();
 
@@ -36,6 +41,11 @@ app.register(getMethod)
 app.register(getCategoty)
 app.register(getColors)
 app.register(getIcons)
+app.register(deleteTransactions)
+app.register(deleteReminder)
+app.register(deleteCategory)
+app.register(deleteMethod)
+app.register(deleteUser)
 
 app.get('/teste', () => {
     return "hello"
