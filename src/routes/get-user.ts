@@ -5,6 +5,7 @@ import z from "zod";
 
 const transactionSchema = z.object({
   id: z.string().uuid(),
+  name: z.string(),
   amount: z.number(),
   type: z.enum(["INCOME", "EXPENSE"]),
   created_at: z.coerce.date(),
@@ -13,7 +14,7 @@ const transactionSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
     colorId: z.string().uuid(),
-    iconId: z.string().uuid() 
+    iconId: z.string().uuid()
   }).optional(),
   paymentMethod: z.object({
     id: z.string().uuid(),
@@ -50,8 +51,8 @@ export async function getUser(app: FastifyInstance) {
                 select: {
                   id: true,
                   name: true,
-                  colorId: true, 
-                  iconId: true  
+                  colorId: true,
+                  iconId: true
                 }
               },
               paymentMethod: {
