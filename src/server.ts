@@ -24,6 +24,7 @@ import { deleteUser } from './routes/delete-user';
 import { PrismaClient } from '@prisma/client';
 import { exec } from 'child_process';
 import util from 'util';   
+import { getUsers } from './routes/get-all-users';
 
 const prisma = new PrismaClient();
 const execPromise = util.promisify(exec);
@@ -80,6 +81,8 @@ app.register(deleteReminder)
 app.register(deleteCategory)
 app.register(deleteMethod)
 app.register(deleteUser)
+app.register(getUsers)
+
 
 app.get('/teste', () => {
     return "hello"
