@@ -11,7 +11,9 @@ const transactionSchema = z.object({
   update_at: z.coerce.date().optional(),
   paymentCategory: z.object({
     id: z.string().uuid(),
-    name: z.string()
+    name: z.string(),
+    colorId: z.string().uuid(),
+    iconId: z.string().uuid() 
   }).optional(),
   paymentMethod: z.object({
     id: z.string().uuid(),
@@ -44,8 +46,20 @@ export async function getUser(app: FastifyInstance) {
         include: {
           transaction: {
             include: {
-              paymentCategory: true,
-              paymentMethod: true
+              paymentCategory: {
+                select: {
+                  id: true,
+                  name: true,
+                  colorId: true, 
+                  iconId: true  
+                }
+              },
+              paymentMethod: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
             }
           }
         }
