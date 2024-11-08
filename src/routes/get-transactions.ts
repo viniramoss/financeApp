@@ -57,12 +57,10 @@ export async function getTransactions(app: FastifyInstance) {
                 }
             });
 
-            // Verificar se encontrou transações
             if (transactionsFromDb.length === 0) {
                 return reply.status(404).send({ error: "Nenhuma transação encontrada" });
             }
 
-            // Validar as transações usando Zod
             const validatedTransactions = transactionsSchema.safeParse(transactionsFromDb);
             if (!validatedTransactions.success) {
                 return reply.status(400).send({
@@ -71,7 +69,6 @@ export async function getTransactions(app: FastifyInstance) {
                 });
             }
 
-            // Retornar transações válidas
             return reply.status(200).send({ transactions: validatedTransactions.data });
 
         } catch (error) {
